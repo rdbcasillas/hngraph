@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+    <head>
+        <title>HN graph</title>
+        <script src="d3.v3.min.js"></script>
+    </head>
+
+    <body>
+        <script>
+            var canvas = d3.select("body").append("svg")
+                         .attr("width", 2000)
+                         .attr("height", 2000)
+                         .append('g')
+                            .attr('transform', "translate(100,200)");
+
+            var width = 960,
+                height = 2000;
+
+            var tree = d3.layout.tree()
+                .size([height, width - 160]);
+
+            var diagonal = d3.svg.diagonal()
+                .projection(function(d) { return [d.y, d.x]; });
+            /*var tree = d3.layout.tree()
+                        .size([1000, 500])
+                        .separation(function separation(a, b) {
+                            return a.children == b.children ? 5 : 5;
+                         });*/
+
+                        
+
+            
+            d3.json("test.json", function(json){
+                var nodes = tree.nodes(json);
+                console.log(nodes);
+                var links = tree.links(nodes);
+                console.log(links)
+                var node = canvas.selectAll('.node')
+                    .data(nodes)
+                    .enter()
+                    .append('g')
+                        .attr('class', 'node')
+                        .attr("transform", function(d){ return "translate(" + d.x + "," + d.y + ")";})
+                
+                var diagonal = d3.svg.diagonal();
+
+                node.append('circle')
+                    .attr('r', 5)
+                    .attr('fill', 'steelblue');
+
+                node.append('text')
+                    .text(function(d){ return d.author;})
+                    
+
+                canvas.selectAll('.links')
+                    .data(links)
+                    .enter()
+                    .append("path")
+                    .attr('class', 'links')
+                    .attr('fill', "none")
+                    .attr('stroke', 'black')
+                    .attr('d', diagonal);
+            });
+
+
+        </script>
+    </body>
+</html>
